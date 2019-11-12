@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Lista Dinámica | Patricia Manzanero</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+<!--NO ABRIR CON LIVE SERVER 
+
+    PARA ABRIR EL SERVIDOR EN CONSOLA:
+
+    cd ../servidor-json/
+    npm start
+    
+    En navegador: http://localhost:8080/
+
+
+
+INDEX.html Tiene que estar siempre dentro del directorio public
+
+-->
+    <section>
+        <h1>Lista dinámica conectada a db.json</h1>
+        <h4>Descripción</h4>
+        <p>NOTA: Insertar valores, tachar, borrar. Los valores se guardan en db.json, se hacen peticiones fetch a la db para recuperar los datos al actualizar la página.</p>
+        <br>
+    <form action="">
+
+        <input id="texto" type="text">
+        <input id="boton" type="button" value=Insertar>
+
+    </form>
+
+    <ul></ul>
+    </section>
+    <script> 
+    
+     //DEL SERVIDOR
+
+    localStorage.setItem('Token', 'aki se puede meter un objeto en forma de string, etc'); //F12, aplication, local storage
+
+    const url = "http://localhost:8080/todos/";                  //Mi db.json
+    const miPromesa = fetch("http://localhost:8080/todos/");
+    miPromesa.then(r=>r.json()).then(res=>console.log(res));
+
+    const getTodos = () => {
+        return fetch(url).then(res => res.json());
+    }
+    
+    const createTodo = (name) => {
+        let miLi = document.createElement("li");
+        miUl.appendChild(miLi);
+        miLi.appendChild(document.createTextNode(name));
+        miLi.setAttribute("id", name.id);  
+
+        return fetch (url, {   //el fetch acepta parametros, el primero es la url y el segundo es un objeto que hace algo a la bd
+            method: "POST",  //añade
+            headers: {
+                "Acept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({name:name, isComplete:false})
+        }).then(r=>console.log(r.json()));
+
+    }
+   /* 
+    const updateTodo = (todo) => {
+        return fetch (`${url}/${todo.id}`, {
+            method: "PUT", //actualiza
+            headers: {
+                "Acept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(todo)
+        })
+        .then(res=>res.json())
+    };
+    */
+
+    const destryTodo = (todo) => {
+        return fetch (`${url}/${todo.id}`, {
+            method: "DELETE",  //Borra
+            headers: {
+                "Acept": "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+    }
+    ;
+
+
+    
+    
+    
+    
+    //del TODOLIST
+        getTodos().then((r)=>{
+                r.forEach((i)=>{
+                    let miLi = document.createElement("li");
+                    miUl.appendChild(miLi);
+                    miLi.appendChild(document.createTextNode(i.name));
+                    miLi.setAttribute("id", i.id);  
+                });
+            }
+        )
+
+
+        let texto ="";
+
+        document.querySelector("#boton").addEventListener('click', function (e) {
+            e.stopPropagation();
+          //  e.preventDefault(); //para que no se refresque la página
+            texto = document.querySelector('#texto').value;
+            
+            createTodo(texto);//del servidor - union con el servidor
+            fetch("http://localhost:8080/todos/").then(r=>r.json()).then(res=>console.log(res));
+            
+         
+    });
+        const miUl = document.querySelector("ul")
+        miUl.addEventListener('click', function () {
+            let target = event.target;
+            if (target.className === 'tachar') {
+                target.parentNode.removeChild(target);
+                event.preventDefault();
+                destryTodo(target);
+                fetch("http://localhost:8080/todos/").then(r=>r.json()).then(res=>console.log(res));
+
+            } else {
+                target.classList.add('tachar');
+            }
+        });
+
+  
+
+
+
+
+
+
+
+    /*  CODIGO ORIGINAL ANTES DE AÑADIR EL TODOLIST
+
+
+        localStorage.setItem('Token', 'aki se puede meter un objeto en forma de string, etc'); //F12, aplication, local storage
+
+//Tiene que estar siempre dentro del directorio public
+    const url = "http://localhost:8080/todos/";
+    const miPromesa = fetch("http://localhost:8080/todos/");
+    miPromesa.then(r=>r.json()).then(res=>console.log(res));
+
+    const getTodos = () => {
+        return fetch(url).then(res => res.json())
+    }
+    
+    const createTodo = (name) => {
+        return fetch (url, {   //el fetch acepta 2 parametros, el primero es la url y el segundo es un objeto que te lo añade a la bd
+            method: "POST",  //añade
+            headers: {
+                "Acept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({name:name, isComplete:false})
+        })
+    }
+    
+    const updateTodo = (todo) => {
+        return fetch (`${url}/${todo.id}`, {
+            method: "PUT", //actualiza
+            headers: {
+                "Acept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(todo)
+        })
+        .then(res=>res.json())
+    }
+    
+    const destryTodo = (id) => {
+        return fetch (`${url}/${todo.id}`, {
+            method: "DELETE",  //Borra
+            headers: {
+                "Acept": "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+    }
+*/
+
+    </script>
+
+
+</body>
+</html>

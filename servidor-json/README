@@ -1,0 +1,11 @@
+ PARA ABRIR EL SERVIDOR EN CONSOLA:
+
+    cd ../servidor-json
+    npm init
+    add to package.json on scripts:
+     "dev-server": "json-server -p 8080 db.json",  
+    "start": "json-server -p 8080 db.json"
+    npm install --save json-server
+    npm start
+    
+En navegador: http://localhost:8080/
